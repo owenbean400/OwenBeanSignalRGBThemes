@@ -1,0 +1,96 @@
+<head>
+  <title>Red/Green Side To Side</title>
+  <meta description="Christmas Theme Red and Green"/>
+  <meta publisher="Owen Bean" />
+  <meta property="speed" label="Cycle Speed" type="number" min="1" max="10" default="2">
+</head>
+  
+<body style="margin: 0; padding: 0;">
+  <canvas id="exCanvas" width="320" height="200"></canvas>
+</body>
+  
+<script src="../Helper/helperClasses.js"></script>
+
+<script>
+
+  var c = document.getElementById("exCanvas");
+  var ctx = c.getContext("2d"); 
+
+  var width = 320;
+  var height = 200;
+
+  ctx.fillStyle = `hsl(0, 0%, 100%)`;
+  ctx.fillRect(0, 0, width , height);
+
+  class RectangleMoving {
+    constructor(color, position, startingPositionX, startingPositionY,
+        height, width, sideTosideDirection, 
+        limitHeight, limitWidth, 
+        ctx) {
+        this.color = color;
+        this.startingPositionX = startingPositionX;
+        this.startingPositionY = startingPositionY;
+        this.position = position;
+        this.height = height;
+        this.width = width;
+        this.sideTosideDirection = sideTosideDirection;
+        this.ctx = ctx;
+        this.limitHeight = limitHeight;
+        this.limitWidth = limitWidth;
+    }
+
+    render(speed) {
+        if (this.sideTosideDirection) {
+        ctx.fillStyle = this.color;
+
+        if (this.position + this.width > this.limitWidth) {
+            ctx.fillRect(this.position, this.startingPositionY, this.width, this.height);
+            ctx.fillRect(this.startingPositionX, this.startingPositionY, this.position + this.width - this.limitWidth, this.height);
+        } else {
+            ctx.fillRect(this.position, this.startingPositionY, this.width, this.height);
+        }
+
+        this.position += speed;
+
+        if (this.position > this.limitWidth) {
+            this.position = this.startingPositionX;
+        }
+        } else {
+        ctx.fillStyle = this.color;
+
+        if (this.position + this.height > this.limitHeight) {
+            ctx.fillRect(this.startingPositionX, this.position, this.width, this.limitHeight - this.position);
+            ctx.fillRect(this.startingPositionX, this.startingPositionY, this.width, this.height + this.position - this.limitHeight);
+        } else {
+            ctx.fillRect(this.startingPositionX, this.position, this.width, this.height);
+        }
+
+        this.position += speed;
+
+        if (this.position > this.limitHeight) {
+            this.position = this.startingPositionY;
+        }
+        }
+
+    }
+  }
+
+  var rendorColorMovingGreen = [
+    new RectangleMoving(`hsl(130, 100%, 50%)`, 0, 0, 0, 200, 80, true, height, width, ctx),
+    new RectangleMoving(`hsl(130, 100%, 50%)`, 160, 0, 0, 200, 80, true, height, width, ctx),
+  ];
+
+  function update() {
+    ctx.fillStyle = `hsl(0, 100%, 50%)`;
+    ctx.fillRect(0, 0, width , height);
+
+    for (renderItem of rendorColorMovingGreen) {
+      renderItem.render(speed);
+    }
+
+    window.requestAnimationFrame(update);
+  }
+
+  window.requestAnimationFrame(update);
+
+</script>
